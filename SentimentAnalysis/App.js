@@ -24,7 +24,7 @@ export default class App extends Component<{}> {
     super(props);
 
     this.state = {
-      inputText: "@realdonaldtrump",
+      inputText: "",
       //data: {},
 
       //Extraversion
@@ -221,7 +221,8 @@ _renderItem(item){
           </View>
           <View style={{flexDirection:'row'}}>
             <View style={styles.header2Container}>
-              <Text style={styles.header2}>Traits</Text>
+              <Text style={styles.header2}>Traits: </Text>
+              <Text style={[styles.header2, {color:"gray"}]}>{this.state.inputText}</Text>
             </View>
           </View>
           <View style={{flexDirection:'row'}}>
@@ -306,6 +307,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     padding:10,
     marginBottom:10,
+    flexDirection:'row'
   },
   header2:{
     fontSize:20,

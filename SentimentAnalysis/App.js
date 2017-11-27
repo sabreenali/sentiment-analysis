@@ -12,15 +12,11 @@ import {
   View,
   TextInput,
   TouchableHighlight,
-  FlatList
+  FlatList,
+  ScrollView
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+console.disableYellowBox = true;
 
 export default class App extends Component<{}> {
 
@@ -28,12 +24,34 @@ export default class App extends Component<{}> {
     super(props);
 
     this.state = {
-      inputText: "",
-      data: {},
-      neg_tweets_percent: "",
-      pos_tweets_percent: "",
-      pos_tweets: [],
-      neg_tweets: [],
+      inputText: "@realdonaldtrump",
+      //data: {},
+
+      //Extraversion
+      Extraversion: [],
+      // cheerfullness:"",
+      // activity_level:"",
+
+      //Agreeableness
+      Agreeableness:[],
+    //  trust:"",
+      AgreeablenessID:"",
+      AgreeablenessPercentage:"",
+
+      //Neuroticism (BIG5 personality):
+      Neuroticism: [],
+      // prone_to_worry: "",
+      // melancholy: "",
+      // susceptible_to_stress:"",
+
+      Needs:[],
+      // closeness:"",
+      // curiosity:"",
+      // excitement:"",
+
+      Values:[],
+      // openness_to_change:"",
+      // hedonism: "",
 
     };
     //this.handleChangeText = this.handleChangeText.bind(this);
@@ -45,11 +63,10 @@ export default class App extends Component<{}> {
     console.log(this.state.inputText);
     var that = this;
     var username = this.state.inputText;
-    fetch("http://127.0.0.1:5000/?handle=" + username)
+    //http://0.0.0.0:8000/
+    fetch("http://0.0.0.0:8000/?handle=" + username)
     .then((response)=>response.json())
     .then(function(response){
-
-      console.log(response);
       that.setState({
         data: response,
       });
@@ -63,51 +80,124 @@ export default class App extends Component<{}> {
   getData(){
     console.log(this.state.data);
     var data = this.state.data;
-    this.setState({
-      neg_tweets_percent: data["neg_tweets_percent"],
-      pos_tweets_percent: data["pos_tweets_percent"],
-      neg_tweets: data["neg_tweets"],
-      pos_tweets: data["pos_tweets"]
-    }, ()=>{
-      var pos_tweets_arr = [];
-      for(var t of this.state.pos_tweets){
-        pos_tweets_arr.push({
-          tweet: t,
-        });
-      }
-      var neg_tweets_arr = [];
-      for(var t of this.state.neg_tweets){
-        neg_tweets_arr.push({
-          tweet: t,
-        });
-      }
-      this.setState({
-        pos_tweets: pos_tweets_arr,
-        neg_tweets: neg_tweets_arr
+    //cheerfullness
+    this.state.Extraversion.push({
+      id: data["tree"]["children"][0]["children"][0]["children"][2]["children"][2]["id"],
+      percentage: data["tree"]["children"][0]["children"][0]["children"][2]["children"][2]["percentage"],
+      });
+      //activity_level
+    this.state.Extraversion.push({
+      id: data["tree"]["children"][0]["children"][0]["children"][2]["children"][0]["id"],
+      percentage: data["tree"]["children"][0]["children"][0]["children"][2]["children"][0]["percentage"],
+      });
+      //trust
+      this.state.Agreeableness.push({
+        id: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["id"],
+        percentage: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["percentage"],
       })
-    }
-  );
+      //trust
+      // this.state.Agreeableness.push({
+      //   id: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["id"],
+      //   percentage: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["percentage"],
+      // })
+      this.setState({
+        Agreeableness:[{id: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["id"],
+        percentage: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["percentage"],
+      }],
+        // AgreeablenessID: this.state.Agreeableness[0]["id"],
+        // AgreeablenessPercentage: this.state.Agreeableness[0]["percentage"],
+      })
+      //prone_to_worry
+      this.state.Neuroticism.push({
+        id: data["tree"]["children"][0]["children"][0]["children"][4]["children"][1]["id"],
+        percentage: data["tree"]["children"][0]["children"][0]["children"][4]["children"][1]["percentage"],
+      })
+      //melancholy
+      this.state.Neuroticism.push({
+        id: data["tree"]["children"][0]["children"][0]["children"][4]["children"][2]["id"],
+        percentage: data["tree"]["children"][0]["children"][0]["children"][4]["children"][2]["percentage"],
+      })
+      //susceptible_to_stress
+      this.state.Neuroticism.push({
+        id: data["tree"]["children"][0]["children"][0]["children"][4]["children"][5]["id"],
+        percentage: data["tree"]["children"][0]["children"][0]["children"][4]["children"][5]["percentage"],
+      })
+      //closeness
+      this.state.Needs.push({
+        id: data["tree"]["children"][1]["children"][0]["children"][1]["id"],
+        percentage: data["tree"]["children"][1]["children"][0]["children"][1]["percentage"],
+      })
+      //curiosity
+      this.state.Needs.push({
+        id: data["tree"]["children"][1]["children"][0]["children"][2]["id"],
+        percentage: data["tree"]["children"][1]["children"][0]["children"][2]["percentage"],
+      })
+      //excitement
+      this.state.Needs.push({
+        id: data["tree"]["children"][1]["children"][0]["children"][3]["id"],
+        percentage: data["tree"]["children"][1]["children"][0]["children"][3]["percentage"],
+      })
+      //openness_to_change
+      this.state.Values.push({
+        id: data["tree"]["children"][2]["children"][0]["children"][1]["id"],
+        percentage: data["tree"]["children"][2]["children"][0]["children"][1]["percentage"],
+      })
+      //hedonism
+      this.state.Values.push({
+        id: data["tree"]["children"][2]["children"][0]["children"][2]["id"],
+        percentage: data["tree"]["children"][2]["children"][0]["children"][2]["percentage"],
+      })
+    console.log("state", this.state);
+    // this.setState({
+    //   cheerfullness: data["tree"]["children"][0]["children"][0]["children"][2]["children"][2]["percentage"],
+    //   activity_level: data["tree"]["children"][0]["children"][0]["children"][2]["children"][0]["percentage"],
+    //
+    //   trust: data["tree"]["children"][0]["children"][0]["children"][3]["children"][5]["percentage"],
+    //
+    //   prone_to_worry: data["tree"]["children"][0]["children"][0]["children"][4]["children"][1]["percentage"],
+    //   melancholy: data["tree"]["children"][0]["children"][0]["children"][4]["children"][2]["percentage"],
+    //   susceptible_to_stress: data["tree"]["children"][0]["children"][0]["children"][4]["children"][5]["percentage"],
+    //
+    //   closeness: data["tree"]["children"][1]["children"][0]["children"][1]["percentage"],
+    //   curiosity: data["tree"]["children"][1]["children"][0]["children"][2]["percentage"],
+    //   excitement: data["tree"]["children"][1]["children"][0]["children"][3]["percentage"],
+    //
+    //   openness_to_change: data["tree"]["children"][2]["children"][0]["children"][1]["percentage"],
+    //   hedonism: data["tree"]["children"][2]["children"][0]["children"][2]["percentage"],
+    // });
   }
 
 _renderItem(item){
+  var percent = Math.round(item.percentage*100);
+
   return(
     <View style={styles.row}>
-    <Text style={styles.tweet}>{item.tweet}</Text>
+      <Text style={styles.item}>{item.id}: </Text>
+      <Text style={styles.item}>{percent} %</Text>
     </View>
   );
 }
 
 
   render() {
+    console.log("render", this.state.Agreeableness);
+    console.log("render", this.state.Extraversion);
+    var arr = [];
+    arr.push({
+      id: this.state.AgreeablenessID,
+      percentage: this.state.AgreeablenessPercentage,
+    })
     return (
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.header}>
-          Sentiment Analysis
-          </Text>
+      <View style={{flexDirection:'row'}}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>
+            Sentiment Analysis
+            </Text>
+          </View>
         </View>
-        <View>
-        <Text>
+        <View style={{flexDirection:'row', alignItems:'center', margin:15,}}>
+        <Text style={{marginHorizontal:10}}>
         Input Twitter Handle:
         </Text>
         <TextInput
@@ -129,19 +219,52 @@ _renderItem(item){
             </View>
           </TouchableHighlight>
           </View>
-
-          <View>
-          <Text style={styles.percentage}>Positive Tweets Percentage: {this.state.pos_tweets_percent}</Text>
-          <FlatList
-            data={this.state.pos_tweets}
-            renderItem={({item}) => this._renderItem(item)}
-          />
-          <Text>Negative Tweets Percentage: {this.state.neg_tweets_percent}</Text>
-          <FlatList
-            data={this.state.neg_tweets}
-            renderItem={({item}) => this._renderItem(item)}
-          />
+          <View style={{flexDirection:'row'}}>
+            <View style={styles.header2Container}>
+              <Text style={styles.header2}>Traits</Text>
+            </View>
           </View>
+          <View style={{flexDirection:'row'}}>
+
+<ScrollView>
+            <View style={styles.list}>
+              <Text style={styles.title}>Extraversion (BIG5 personality)</Text>
+              <FlatList
+                data={this.state.Extraversion}
+                renderItem={({item}) => this._renderItem(item)}
+              />
+            </View>
+            <View style={styles.list}>
+              <Text style={styles.title}>Agreeableness (BIG5 personality)</Text>
+              <FlatList
+                data={this.state.Agreeableness}
+                renderItem={({item}) => this._renderItem(item)}
+              />
+            </View>
+            <View style={styles.list}>
+            <Text style={styles.title}>Neuroticism (BIG5 personality)</Text>
+            <FlatList
+              data={this.state.Neuroticism}
+              renderItem={({item}) => this._renderItem(item)}
+            />
+          </View>
+          <View style={styles.list}>
+            <Text style={styles.title}>Needs</Text>
+            <FlatList
+              data={this.state.Needs}
+              renderItem={({item}) => this._renderItem(item)}
+
+            />
+          </View>
+          <View style={styles.list}>
+            <Text style={styles.title}>Values</Text>
+            <FlatList
+              data={this.state.Values}
+              renderItem={({item}) => this._renderItem(item)}
+            />
+          </View>
+        </ScrollView>
+</View>
       </View>
 
     );
@@ -157,6 +280,10 @@ const styles = StyleSheet.create({
   },
   headerContainer:{
     backgroundColor:'#d3d3d3',
+    flexDirection:'row',
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center'
   },
   header:{
     fontSize:30,
@@ -164,7 +291,7 @@ const styles = StyleSheet.create({
   },
   button:{
     backgroundColor:'red',
-    width:120,
+    width:200,
     //borderRadius:100,
     alignItems:'center'
   },
@@ -172,15 +299,40 @@ const styles = StyleSheet.create({
     alignItems:'center',
     paddingBottom: 15,
   },
-  tweet:{
-    fontSize:14,
-    padding:5,
-    paddingHorizontal: 10
+  header2Container:{
+    flex:1,
+    backgroundColor:"#dfdfdf",
+    alignItems:'center',
+    justifyContent:'center',
+    padding:10,
+    marginBottom:10,
+  },
+  header2:{
+    fontSize:20,
+  },
+  list:{
+    height:80,
+    flex:1,
+    flexDirection:'column',
+    paddingHorizontal:20,
+    borderBottomWidth:1,
+    borderBottomColor:'gray'
 
   },
   row:{
     borderColor:'gray',
-    borderBottomWidth: 1,
+    flexDirection:'row'
+    //borderBottomWidth: 1,
+  },
+  title:{
+    fontSize:16,
+    fontWeight:'bold',
+    borderBottomWidth:1,
+    borderBottomColor:'gray',
+    //textDecorationLine:'underline'
+  },
+  item:{
+    padding:5,
   }
 
 
